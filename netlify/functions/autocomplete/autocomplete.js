@@ -3,6 +3,6 @@ exports.handler = async (event, context) => {
 
   return {
     statusCode: 200,
-    body: `You searched for ${search}`,
+    body: JSON.stringify({ message: `You searched for ${search}` }),
   };
 };

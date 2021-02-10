@@ -19,7 +19,7 @@ export default {
       fetch("/.netlify/functions/autocomplete?search=" + this.search)
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
+          console.log(res.message);
         })
         .catch((err) => {
           console.log(err);
