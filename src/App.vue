@@ -6,9 +6,10 @@
       name="search"
       @keyup="autocomplete"
       @blur="results = []"
+      @focus="autocomplete"
     />
     <ul v-show="results.length > 0">
-      <li v-for="r in results" :key="r.id">{{ r.year }} ({{ r.title }})</li>
+      <li v-for="r in results" :key="r.id">{{ r.title }} ({{ r.year }})</li>
     </ul>
   </div>
 </template>
@@ -20,6 +21,7 @@ export default {
     return {
       search: "",
       results: [],
+      prevSearch: "",
     };
   },
   methods: {
@@ -28,6 +30,12 @@ export default {
         this.results = [];
         return;
       }
+
+      if (this.search === this.prevSearch && this.results.length > 0) {
+        return;
+      }
+
+      this.prevSearch = this.search;
 
       fetch("/.netlify/functions/autocomplete?search=" + this.search)
         .then((res) => res.json())
@@ -38,6 +46,9 @@ export default {
           console.log(err);
         });
     },
+  },
+  created() {
+    fetch("./netlify/functions/autocomplete?search=1");
   },
 };
 </script>
@@ -50,5 +61,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+li {
+  list-style-type: none;
 }
 </style>
