@@ -1,19 +1,32 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <input v-model="search" type="text" name="search" />
+    <button @click="hello">go</button>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: "App",
+  data() {
+    return {
+      search: "",
+    };
+  },
+  methods: {
+    hello() {
+      // alert("hello " + this.search);
+      fetch("/.netlify/functions/autocomplete?search=" + this.search)
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+};
 </script>
 
 <style>
