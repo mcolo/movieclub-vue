@@ -1,7 +1,15 @@
 <template>
   <div>
-    <input v-model="search" type="text" name="search" />
-    <button @click="hello">go</button>
+    <input
+      v-model="search"
+      type="text"
+      name="search"
+      @keyup="autocomplete"
+      @blur="results = []"
+    />
+    <ul v-show="results.length > 0">
+      <li v-for="r in results" :key="r.id">{{ r.year }} ({{ r.title }})</li>
+    </ul>
   </div>
 </template>
 
@@ -11,15 +19,20 @@ export default {
   data() {
     return {
       search: "",
+      results: [],
     };
   },
   methods: {
-    hello() {
-      // alert("hello " + this.search);
+    autocomplete() {
+      if (this.search.length < 1) {
+        results = [];
+        return;
+      }
+
       fetch("/.netlify/functions/autocomplete?search=" + this.search)
         .then((res) => res.json())
         .then((res) => {
-          console.log(res.message);
+          this.results = res;
         })
         .catch((err) => {
           console.log(err);
