@@ -25,7 +25,7 @@ export default {
   methods: {
     autocomplete() {
       if (this.search.length < 1) {
-        results = [];
+        this.results = [];
         return;
       }
 
