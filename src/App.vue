@@ -37,14 +37,25 @@ export default {
 
       this.prevSearch = this.search;
 
-      fetch("/.netlify/functions/autocomplete?search=" + this.search)
+      fetch("https://fathomless-reaches-08772.herokuapp.com/search/", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prefix: query }),
+      })
         .then((res) => res.json())
-        .then((res) => {
-          this.results = res;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        .then((data) => (this.results = data.movieData))
+        .catch((err) => console.log(err));
+      // fetch("/.netlify/functions/autocomplete?search=" + this.search)
+      //   .then((res) => res.json())
+      //   .then((res) => {
+      //     this.results = res;
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     },
   },
   created() {
