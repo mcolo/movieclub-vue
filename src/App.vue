@@ -47,8 +47,8 @@ export default {
         });
     },
   },
-  mounted() {
-    fetch("./netlify/functions/autocomplete?search=1");
+  created() {
+    fetch("/.netlify/functions/autocomplete?search=1");
   },
 };
 </script>

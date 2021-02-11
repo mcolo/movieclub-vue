@@ -63,17 +63,13 @@ function getIds(obj, ids = []) {
 
 function getMovieData(ids) {
   let data = [];
-  ids.forEach((id, index) => {
-    if (movieData[id].r) {
-      data.push({
-        title: movieData[id].t,
-        year: movieData[id].y,
-        rating: movieData[id].r,
-        id,
-      });
-    }
-  });
-  // data.sort( (a,b) => b.rating - a.rating);
-  data.splice(9, data.length - 10);
+  for (let id of ids) {
+    data.push({
+      title: movieData[id].t,
+      year: movieData[id].y,
+      id,
+    });
+    if (data.length > 9) break;
+  }
   return data;
 }
