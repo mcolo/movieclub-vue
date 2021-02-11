@@ -43,7 +43,7 @@ export default {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prefix: query }),
+        body: JSON.stringify({ prefix: this.search }),
       })
         .then((res) => res.json())
         .then((data) => (this.results = data.movieData))
