@@ -47,7 +47,7 @@ export default {
         });
     },
   },
-  created() {
+  mounted() {
     fetch("./netlify/functions/autocomplete?search=1");
   },
 };
