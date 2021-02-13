@@ -5,12 +5,25 @@
       type="text"
       name="search"
       @keyup="autocomplete"
-      @blur="results = []"
       @focus="autocomplete"
     />
     <ul v-show="results.length > 0">
-      <li v-for="r in results" :key="r.id">{{ r.title }} ({{ r.year }})</li>
+      <li v-for="movie in results" :key="movie.id" @click="addToPicks(movie)">
+        {{ movie.title }} ({{ movie.year }})
+      </li>
     </ul>
+    <div v-show="picks.length > 0">
+      <h3>Your Picks</h3>
+      <ul>
+        <li
+          v-for="(pick, idx) in picks"
+          :key="pick.id"
+          @click="removePick(idx)"
+        >
+          {{ pick.title }} ({{ pick.year }})
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -22,6 +35,7 @@ export default {
       search: "",
       results: [],
       prevSearch: "",
+      picks: [],
     };
   },
   methods: {
@@ -57,14 +71,55 @@ export default {
       //     console.log(err);
       //   });
     },
+    addToPicks(movie) {
+      if (this.picks.indexOf(movie) > -1) return;
+      this.picks.push(movie);
+    },
+    removePick(idx) {
+      this.picks.splice(idx, 1);
+    },
+    startupServer() {
+      fetch("https://fathomless-reaches-08772.herokuapp.com/search/", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prefix: "" }),
+      });
+    },
+    savePicks() {
+      // post request
+      // insert movie ids into DB
+      // return database ID to use as URL
+    },
+    // TODO
+    // share URL in dialog? save ids in DB when button is clicked
+    // share URL after first pick? save ids in DB when pick is made
+  },
+  computed: {
+    shareLink() {
+      return (
+        window.location.origin +
+        "/picks/ids?=" +
+        this.picks.map((val) => val.id).join(",")
+      );
+    },
   },
   created() {
-    fetch("/.netlify/functions/autocomplete?search=1");
+    this.startupServer();
   },
 };
 </script>
 
 <style>
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -74,7 +129,17 @@ export default {
   margin-top: 60px;
 }
 
+ul {
+  margin: none;
+  padding: none;
+}
+
 li {
   list-style-type: none;
+  cursor: pointer;
+}
+
+li:hover {
+  text-decoration: underline;
 }
 </style>
