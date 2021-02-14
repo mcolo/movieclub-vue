@@ -1,12 +1,6 @@
 <template>
   <div>
-    <input
-      v-model="search"
-      type="text"
-      name="search"
-      @keyup="autocomplete"
-      @focus="autocomplete"
-    />
+    <input v-model="search" type="text" name="search" @keyup="autocomplete" />
     <ul v-show="results.length > 0">
       <li v-for="movie in results" :key="movie.id" @click="addToPicks(movie)">
         {{ movie.title }} ({{ movie.year }})
@@ -23,6 +17,10 @@
           {{ pick.title }} ({{ pick.year }})
         </li>
       </ul>
+      <label for="title">Title</label>
+      <input v-model="title" name="title" placeholder="title" />
+      <button @click="getShareUrl">Share Picks</button>
+      <p v-if="shareUrl">{{ shareUrl }}</p>
     </div>
   </div>
 </template>
@@ -33,8 +31,11 @@ export default {
     return {
       search: "",
       results: [],
+      title: "",
       prevSearch: "",
       picks: [],
+      id: null,
+      shareUrl: "",
     };
   },
   methods: {
@@ -61,14 +62,6 @@ export default {
         .then((res) => res.json())
         .then((data) => (this.results = data.movieData))
         .catch((err) => console.log(err));
-      // fetch("/.netlify/functions/autocomplete?search=" + this.search)
-      //   .then((res) => res.json())
-      //   .then((res) => {
-      //     this.results = res;
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
     },
     addToPicks(movie) {
       if (this.picks.indexOf(movie) > -1) return;
@@ -77,36 +70,39 @@ export default {
     removePick(idx) {
       this.picks.splice(idx, 1);
     },
-    startupServer() {
-      fetch("https://fathomless-reaches-08772.herokuapp.com/search/", {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prefix: "" }),
+    getShareUrl() {
+      this.savePicks().then(() => {
+        this.shareUrl = window.location.origin + "/picks/" + this.id;
       });
     },
     savePicks() {
-      // post request
-      // insert movie ids into DB
-      // return database ID to use as URL
+      const data = {
+        title: this.title,
+        picks: this.picks,
+        id: this.id,
+      };
+      return fetch(
+        "https://fathomless-reaches-08772.herokuapp.com/savePicks/",
+        {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      )
+        .then((res) => res.json())
+        .then((res) => {
+          this.id = res.id;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     // TODO
     // share URL in dialog? save ids in DB when button is clicked
     // share URL after first pick? save ids in DB when pick is made
-  },
-  computed: {
-    shareLink() {
-      return (
-        window.location.origin +
-        "/picks/ids?=" +
-        this.picks.map((val) => val.id).join(",")
-      );
-    },
-  },
-  created() {
-    this.startupServer();
   },
 };
 </script>
