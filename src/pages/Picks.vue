@@ -18,7 +18,7 @@ export default {
   methods: {
     populateData() {
       const url =
-        "https://fathomless-reaches-08772.herokuapp.com/picks/" +
+        "https://fathomless-reaches-08772.herokuapp.com/api/picks/" +
         this.$route.params.id;
       const options = {
         method: "GET",
@@ -38,7 +38,8 @@ export default {
     },
     getImdbData() {
       const ids = this.picks.map((pick) => pick.id);
-      const url = "https://fathomless-reaches-08772.herokuapp.com/movieData/";
+      const url =
+        "https://fathomless-reaches-08772.herokuapp.com/api/movieData/";
       const options = {
         method: "POST",
         mode: "cors",

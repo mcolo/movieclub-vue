@@ -51,7 +51,7 @@ export default {
 
       this.prevSearch = this.search;
 
-      fetch("https://fathomless-reaches-08772.herokuapp.com/search/", {
+      fetch("https://fathomless-reaches-08772.herokuapp.com/api/search/", {
         method: "POST",
         mode: "cors",
         headers: {
@@ -82,7 +82,7 @@ export default {
         id: this.id,
       };
       return fetch(
-        "https://fathomless-reaches-08772.herokuapp.com/savePicks/",
+        "https://fathomless-reaches-08772.herokuapp.com/api/savePicks/",
         {
           method: "POST",
           mode: "cors",
