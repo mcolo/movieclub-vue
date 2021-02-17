@@ -19,13 +19,16 @@
       </ul>
       <label for="title">Title</label>
       <input v-model="title" name="title" placeholder="title" />
-      <button @click="getShareUrl">Share Picks</button>
-      <p v-if="shareUrl">{{ shareUrl }}</p>
+      <button @click="sharePicks">Share Picks</button>
+      <a v-if="shareUrl" :href="shareUrl" target="_blank">{{ shareUrl }}</a>
     </div>
   </div>
 </template>
 
 <script>
+import { getSearchResults } from "../services/autocomplete-service";
+import { setPicks } from "../services/picks-service";
+
 export default {
   data() {
     return {
@@ -39,7 +42,7 @@ export default {
     };
   },
   methods: {
-    autocomplete() {
+    async autocomplete() {
       if (this.search.length < 1) {
         this.results = [];
         return;
@@ -50,18 +53,23 @@ export default {
       }
 
       this.prevSearch = this.search;
-
-      fetch("https://fathomless-reaches-08772.herokuapp.com/api/search/", {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prefix: this.search }),
-      })
-        .then((res) => res.json())
-        .then((data) => (this.results = data.movieData))
-        .catch((err) => console.log(err));
+      const { movieData } = await getSearchResults(this.search);
+      this.results = movieData || [];
+    },
+    async sharePicks() {
+      const data = {
+        title: this.title,
+        picks: this.picks,
+        id: this.id,
+      };
+      const { id } = await setPicks(data);
+      if (!id) return;
+      /**
+       * TODO
+       * add error message in UI
+       */
+      this.id = id;
+      this.shareUrl = window.location.origin + "/picks/" + this.id;
     },
     addToPicks(movie) {
       if (this.picks.indexOf(movie) > -1) return;
@@ -69,36 +77,6 @@ export default {
     },
     removePick(idx) {
       this.picks.splice(idx, 1);
-    },
-    getShareUrl() {
-      this.savePicks().then(() => {
-        this.shareUrl = window.location.origin + "/picks/" + this.id;
-      });
-    },
-    savePicks() {
-      const data = {
-        title: this.title,
-        picks: this.picks,
-        id: this.id,
-      };
-      return fetch(
-        "https://fathomless-reaches-08772.herokuapp.com/api/savePicks/",
-        {
-          method: "POST",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      )
-        .then((res) => res.json())
-        .then((res) => {
-          this.id = res.id;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
     },
     // TODO
     // share URL in dialog? save ids in DB when button is clicked
