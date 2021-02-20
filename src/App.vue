@@ -26,9 +26,19 @@ body {
   color: #1a202e;
   text-transform: uppercase;
   margin: 10px 15px;
-  /* width: 50%;
-  margin: 15px auto;
-  min-width: 720px; */
+}
+
+.posters {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  justify-content: center;
+  padding: 35px 50px;
+  text-align: center;
+}
+
+.posters::-webkit-scrollbar {
+  display: none;
 }
 
 #app {

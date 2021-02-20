@@ -25,6 +25,16 @@
           <span class="spec">{{ selectedMovieDetails.Genre }}</span>
         </p>
         <p class="details__plot">{{ selectedMovieDetails.Plot }}</p>
+        <div>
+          <a
+            :href="
+              'https://www.justwatch.com/us/search?q=' +
+                selectedMovieDetails.Title
+            "
+            target="_blank"
+            >Just Watch &rarr;</a
+          >
+        </div>
         <p class="details__director">
           Directed by {{ selectedMovieDetails.Director }}
         </p>
@@ -95,18 +105,6 @@ export default {
 .title {
   color: #f98080;
   margin-left: 10px;
-}
-
-.posters {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  justify-content: center;
-  padding: 35px 50px;
-}
-
-.posters::-webkit-scrollbar {
-  display: none;
 }
 
 .poster {
