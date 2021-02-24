@@ -1,77 +1,86 @@
 <template>
   <div>
-    <header>
-      <h1 class="logo">movieclub</h1>
-    </header>
     <section class="posters">
+      <transition-group name="pop">
+        <img
+          class="poster"
+          v-for="(pick, index) in picks"
+          :key="pick.imdbID"
+          :src="pick.Poster"
+          :alt="pick.Title"
+          @click="removePick(index)"
+        />
+      </transition-group>
       <template v-if="picks.length > 0">
-        <ul>
-          <li
-            v-for="(pick, idx) in picks"
-            :key="pick.id"
-            @click="removePick(idx)"
-          >
-            {{ pick.title }}
-          </li>
-        </ul>
-        <label for="title">Title</label>
+        <div
+          class="share"
+          @click="sharePicks"
+          :class="{ 'share--active': sharing }"
+        >
+          <svg-share-icon class="share__icon"></svg-share-icon>
+        </div>
+        <!-- <label for="title">Title</label>
         <input v-model="title" name="title" placeholder="title" />
         <button @click="sharePicks">Share Picks</button>
-        <a v-if="shareUrl" :href="shareUrl" target="_blank">{{ shareUrl }}</a>
+        <a v-if="shareUrl" :href="shareUrl" target="_blank">{{ shareUrl }}</a> -->
       </template>
-      <template v-else>
-        <h3 class="placeholder">
+      <transition name="appear">
+        <h2 class="placeholder" v-if="picks.length < 1">
           Search for a movie to start a new list
-        </h3>
-      </template>
+        </h2>
+      </transition>
     </section>
-    <section class="search">
-      <div class="search-wrap" :class="{ searching: searching === true }">
-        <input
-          v-model="search"
-          type="text"
-          name="search"
-          @keyup="autocomplete"
-          @focus="searching = true"
-          @blur="searching = false"
-          class="search__bar"
-        />
-        <!-- :placeholder="searching ? 'Multiplicity' : null" -->
-        <svg
-          class="search__icon"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 124.524 124.524"
-        >
-          <path
-            d="M51 102.05c10.5 0 20.2-3.2 28.3-8.6l29.3 29.3c2.301 2.3 6.101 2.3 8.5 0l5.7-5.7c2.3-2.3 2.3-6.1 0-8.5l-29.4-29.2c5.399-8.1 8.6-17.8 8.6-28.3 0-28.1-22.9-51-51-51s-51 22.9-51 51c0 28.099 22.8 51 51 51zm0-82c17.1 0 31 13.9 31 31s-13.9 31-31 31-31-13.9-31-31 13.9-31 31-31z"
+    <transition name="search-share-toggle">
+      <section class="search" v-show="!sharing">
+        <div class="search-wrap" :class="{ searching: searching === true }">
+          <input
+            v-model="search"
+            autocomplete="off"
+            type="text"
+            name="search"
+            class="search__bar"
+            @keyup="autocomplete"
+            @blur="inputBlur"
+            @focus="inputFocus"
+            :placeholder="searching ? currentQuote.title : null"
           />
-        </svg>
-        <p v-show="searching" class="search__tip">
-          <template v-if="search.length > 0">Results</template>
-          <template v-else>
-            "{{ quotes[Math.floor(Math.random() * quotes.length)] }}"
-          </template>
-        </p>
-        <ul v-show="results.length > 0" class="search__results">
-          <li
-            v-for="movie in results"
-            :key="movie.id"
-            @click="addToPicks(movie)"
-            class="search__result"
+          <svg-search-icon class="search__icon"></svg-search-icon>
+          <p v-show="searching" class="search__tip">
+            <template v-if="search.length > 0">Results</template>
+            <template v-else>{{ currentQuote.quote }}</template>
+          </p>
+          <ul
+            v-show="this.searching && results.length > 0"
+            class="search__results"
           >
-            {{ movie.title }} ({{ movie.year }})
-          </li>
-        </ul>
-      </div>
-    </section>
+            <search-result-item
+              v-for="movie in results"
+              :key="movie.id"
+              :movie="movie"
+              @addToPicks="addToPicks(movie)"
+            ></search-result-item>
+          </ul>
+        </div>
+      </section>
+    </transition>
+    <transition name="search-share-toggle">
+      <share-picks v-show="sharing" :picks="picks"></share-picks>
+    </transition>
   </div>
 </template>
 
 <script>
 import { getSearchResults } from "../services/autocomplete-service";
-import { setPicks } from "../services/picks-service";
+import { getMovieDataFromIds } from "../services/picks-service";
+import blop from "../assets/blop.mp3";
+import woosh from "../assets/swoosh.mp3";
+import SearchResultItem from "../components/SearchResultItem.vue";
+import SvgShareIcon from "../inline-svgs/SvgShareIcon.vue";
+import SvgSearchIcon from "../inline-svgs/SvgSearchIcon.vue";
+import SharePicks from "../components/SharePicks.vue";
 
 export default {
+  components: { SearchResultItem, SvgShareIcon, SvgSearchIcon, SharePicks },
   data() {
     return {
       search: "",
@@ -81,15 +90,35 @@ export default {
       picks: [],
       id: null,
       shareUrl: "",
+      sharing: false,
       searching: false,
+      quoteIndex: 0,
+      // quotes: [
+      //   "Toto, I've a feeling we're not in Kansas anymore.",
+      //   "Hasta la vista, baby.",
+      //   "Say hello to my little friend!",
+      //   "You're gonna need a bigger boat.",
+      //   "May the force be with you.",
+      // ],
       quotes: [
-        "Toto, I've a feeling we're not in Kansas anymore.",
-        "Hasta la vista, baby.",
-        "Say hello to my little friend!",
-        "You're gonna need a bigger boat.",
-        "May the force be with you.",
+        {
+          title: "The Wizard of Oz",
+          quote: "Toto, I've a feeling we're not in Kansas anymore.",
+        },
+        {
+          title: "Terminator 2",
+          quote: "Hasta la vista, baby.",
+        },
+        { title: "Scarface", quote: "Say hello to my little friend!" },
+        { title: "JAWS", quote: "You're gonna need a bigger boat." },
+        { title: "Star Wars", quote: "May the force be with you." },
       ],
     };
+  },
+  computed: {
+    currentQuote() {
+      return this.quotes[this.quoteIndex];
+    },
   },
   methods: {
     async autocomplete() {
@@ -106,27 +135,37 @@ export default {
       const { movieData } = await getSearchResults(this.search);
       this.results = movieData || [];
     },
-    async sharePicks() {
-      const data = {
-        title: this.title,
-        picks: this.picks,
-        id: this.id,
-      };
-      const { id } = await setPicks(data);
-      if (!id) return;
-      /**
-       * TODO
-       * add error message in UI
-       */
-      this.id = id;
-      this.shareUrl = window.location.origin + "/picks/" + this.id;
+    inputFocus() {
+      this.searching = true;
+      this.quoteIndex = Math.floor(Math.random() * this.quotes.length);
     },
-    addToPicks(movie) {
-      if (this.picks.indexOf(movie) > -1) return;
-      this.picks.push(movie);
+    sharePicks() {
+      this.sharing = !this.sharing;
+    },
+    inputBlur() {
+      if (this.search.length < 1) {
+        this.searching = false;
+      }
+    },
+    async addToPicks(movie) {
+      if (this.pickExists(movie.id)) return;
+      const data = await getMovieDataFromIds([movie.id]);
+      this.picks.push(data.movieData[0]);
+      const audio = new Audio(blop);
+      audio.play();
+    },
+    pickExists(id) {
+      return this.picks.find((pick) => {
+        return pick.imdbID === id;
+      });
     },
     removePick(idx) {
       this.picks.splice(idx, 1);
+      this.playWoosh();
+    },
+    playWoosh() {
+      const audio = new Audio(woosh);
+      audio.play();
     },
     // TODO
     // share URL in dialog? save ids in DB when button is clicked
@@ -135,10 +174,9 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .placeholder {
-  font-family: "Hind", sans-serif;
-  margin: 0;
+  margin: 40px 0 0;
 }
 
 .search {
@@ -170,18 +208,16 @@ export default {
   line-height: 1;
   padding: 15px 20px 10px 58px;
   font-size: 18px;
-  font-family: "Hind", sans-serif;
   display: block;
-  min-width: 400px;
+  min-width: 480px;
   box-sizing: border-box;
-  /* margin: 0 0 15px; */
   transition: 100ms cubic-bezier(0.4, 1, 0.8, 1.7), border 0ms;
-  /* box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.09); */
   cursor: pointer;
 }
 
+.searching .search__bar,
 .search__bar:focus {
-  min-width: 420px;
+  min-width: 540px;
   padding: 20px 25px 15px 58px;
   border-bottom: 1px solid #eee;
   cursor: text;
@@ -197,19 +233,19 @@ export default {
   transition: transform 100ms;
 }
 
+.searching .search__icon,
 .search__bar:focus + .search__icon {
   opacity: 1;
   transform: translateY(5px) scale(1.2);
 }
 
-.search__icon path {
+/* .search__icon >>> path {
   fill: #a5b4fc;
-}
+} */
 
 .search__tip {
   margin: 0;
-  padding: 10px 20px;
-  font-family: "Hind", sans-serif;
+  padding: 15px 18px 10px;
   font-size: 12px;
   text-transform: uppercase;
   font-weight: 700;
@@ -218,17 +254,137 @@ export default {
 }
 
 .search__results {
-  min-width: 400px;
+  min-width: 540px;
   margin: 0;
   padding: 0;
 }
 
-.search__result {
-  list-style-type: none;
+.posters {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  justify-content: center;
+  padding: 15px 50px 40px;
+  text-align: center;
+  align-items: center;
+}
+
+.poster {
+  width: 100px;
+  height: 148px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 20%);
+  margin: 0 0 0 30px;
+  cursor: pointer;
+  transition: 150ms;
+}
+
+.share {
+  margin-left: 30px;
+  flex: none;
+  position: relative;
   cursor: pointer;
 }
 
-li:hover {
-  text-decoration: underline;
+.share__icon {
+  width: 40px;
+  transition: 130ms ease;
+  position: relative;
+  fill: #6366f1;
+}
+
+.share--active .share__icon {
+  fill: #f43f5e;
+}
+
+.share--active .share__icon {
+  transform: rotate(180deg);
+}
+
+.share:not(.share--active):hover .share__icon {
+  transform: scale(1.05);
+}
+
+.share--active:hover .share__icon {
+  transform: scale(1.05) rotate(180deg);
+}
+
+.share::before {
+  opacity: 0;
+  content: "Share";
+  transition: 150ms cubic-bezier(0.4, 1, 0.8, 1.7);
+  position: absolute;
+  left: 27px;
+  top: 0;
+  color: #6366f1;
+  font-weight: 700;
+  line-height: 44px;
+  visibility: hidden;
+  padding-left: 10px;
+}
+
+.share.share--active::before {
+  content: "Back";
+  color: #f43f5e;
+  visibility: visible;
+}
+
+.share:hover::before {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(10px);
+}
+/* 
+.pop-enter-active {
+  transition-duration: 100ms;
+  transition-timing-function: cubic-bezier(0.4, 1, 0.8, 1.7);
+  transition-delay: 100ms;
+} */
+
+.pop-enter-active,
+.pop-leave-active {
+  transition: 100ms cubic-bezier(0.4, 1, 0.8, 1.7);
+}
+
+.pop-enter, .pop-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  transform: scale(0.5);
+}
+
+.appear-enter-active {
+  transition-delay: 200ms;
+  transition-duration: 100ms;
+}
+
+.appear-leave-active {
+  transition: none;
+}
+
+.appear-enter {
+  opacity: 0;
+  transform: translateY(5px);
+}
+
+.appear-leave {
+  opacity: 0;
+}
+
+.search-share-toggle-enter-active {
+  /* transition: 100ms cubic-bezier(0.4, 1, 0.8, 1.7); */
+  transition: 200ms ease-out;
+}
+
+.search-share-toggle-leave-active {
+  transition: none;
+}
+
+.search-share-toggle-enter {
+  opacity: 0;
+  transform: translateY(15px);
+  height: 0;
+}
+
+.search-share-toggle-leave {
+  opacity: 0;
+  height: 0;
 }
 </style>

@@ -9,5 +9,6 @@ export const routes = [
   {
     path: "/picks/:id",
     component: Picks,
+    name: "picks",
   },
 ];

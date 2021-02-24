@@ -1,10 +1,5 @@
 <template>
   <div>
-    <header>
-      <h1 class="logo">
-        movieclub <span class="title">{{ title }}</span>
-      </h1>
-    </header>
     <section class="posters">
       <img
         v-for="movie in movieData"
@@ -19,12 +14,18 @@
     <section class="details">
       <template v-if="selectedMovieDetails">
         <h3 class="details__title">{{ selectedMovieDetails.Title }}</h3>
+        <p class="details__plot">{{ selectedMovieDetails.Plot }}</p>
         <p class="details__specs">
           <span class="spec">{{ selectedMovieDetails.Runtime }}</span>
           <span class="spec">{{ selectedMovieDetails.Year }}</span>
           <span class="spec">{{ selectedMovieDetails.Genre }}</span>
         </p>
-        <p class="details__plot">{{ selectedMovieDetails.Plot }}</p>
+        <p class="details__director">
+          Directed by {{ selectedMovieDetails.Director }}
+        </p>
+        <p class="details__starring">
+          Starring {{ selectedMovieDetails.Actors }}
+        </p>
         <div>
           <a
             :href="
@@ -35,12 +36,6 @@
             >Just Watch &rarr;</a
           >
         </div>
-        <p class="details__director">
-          Directed by {{ selectedMovieDetails.Director }}
-        </p>
-        <p class="details__starring">
-          Starring {{ selectedMovieDetails.Actors }}
-        </p>
       </template>
     </section>
   </div>
@@ -51,7 +46,6 @@ import { getPicksFromId } from "../services/picks-service";
 export default {
   data() {
     return {
-      // picks: [],
       movieData: null,
       title: "",
       selectedMovie: null,
@@ -62,29 +56,13 @@ export default {
       const { picks, error } = await getPicksFromId(this.$route.params.id);
       if (error) return;
       this.movieData = picks.data;
-      this.title = picks.title;
+      this.$emit("setTitle", picks.title);
       this.selectedMovie = this.movieData[0].imdbID;
       /**
        * TODO
        * add error message in UI
        */
-
-      // this.picks = JSON.parse(pickData.picks);
-      // this.title = pickData.title;
-      // const ids = this.picks.map((pick) => pick.id);
-      // const { movieData, error: movieDataError } = await getMovieDataFromIds(
-      //   ids
-      // );
-      // if (movieDataError) return;
-      // this.movieData = movieData;
-      /**
-       * TODO
-       * add error message in UI
-       */
     },
-    // selectMovie(id) {
-    //   this.selectedMovie = this.movieData.find((movie) => movie.imdbID === id);
-    // },
   },
   mounted() {
     this.populateData();
@@ -102,9 +80,15 @@ export default {
 </script>
 
 <style scoped>
-.title {
-  color: #f98080;
-  margin-left: 10px;
+.posters {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  justify-content: center;
+  padding: 30px 50px 70px;
+  text-align: center;
+  align-items: center;
+  gap: 40px;
 }
 
 .poster {
@@ -113,7 +97,6 @@ export default {
   /* aspect-ratio: 1 / 1.48; */
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgb(0 0 0 / 20%);
-  margin: 0 0 0 30px;
   cursor: pointer;
   transition: 150ms;
 }
@@ -132,9 +115,6 @@ export default {
 }
 
 .details {
-  /* background-color: #1a202e;
-  color: #fff; */
-  font-family: "Hind", sans-serif;
   font-weight: 400;
   width: 50%;
   margin: 0 auto;
