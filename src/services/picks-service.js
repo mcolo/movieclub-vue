@@ -13,7 +13,8 @@ export const setPicks = async (data) => {
 };
 
 export const getPicksFromId = async (id) => {
-  const url = "https://fathomless-reaches-08772.herokuapp.com/api/picks/" + id;
+  const url =
+    "https://fathomless-reaches-08772.herokuapp.com/api/loadpicks/" + id;
   const config = { headers: { "Content-Type": "application/json" } };
 
   try {
