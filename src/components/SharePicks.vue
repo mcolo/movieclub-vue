@@ -1,7 +1,7 @@
 <template>
   <section class="share-section">
     <div v-if="shareUrl" class="share-card">
-      <h2>Share the link below to show people your picks.</h2>
+      <h2>Copy the link below and share your picks!</h2>
       <a target="_blank" :href="shareUrl" class="share-link">{{ shareUrl }}</a>
     </div>
     <div v-else class="share-card">
