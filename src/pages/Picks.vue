@@ -21,10 +21,10 @@
           <span class="spec">{{ selectedMovieDetails.Genre }}</span>
         </p>
         <p class="details__director">
-          Directed by {{ selectedMovieDetails.Director }}
+          <b>Directed by</b> {{ selectedMovieDetails.Director }}
         </p>
         <p class="details__starring">
-          Starring {{ selectedMovieDetails.Actors }}
+          <b>Starring</b> {{ selectedMovieDetails.Actors }}
         </p>
         <div>
           <a
@@ -115,7 +115,6 @@ export default {
 }
 
 .details {
-  font-weight: 400;
   width: 50%;
   margin: 0 auto;
   min-width: 720px;
@@ -126,8 +125,13 @@ export default {
   margin: 0;
 }
 
+.details__plot {
+  font-size: 20px;
+}
+
 .details__specs {
   margin: 0;
+  font-weight: 700;
 }
 
 .details__specs .spec {
