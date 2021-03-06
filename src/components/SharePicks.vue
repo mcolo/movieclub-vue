@@ -49,9 +49,8 @@ export default {
         picks: this.picks,
       };
       const { id, error } = await setPicks(data);
-      if (!id) return;
-      if (error) {
-        console.log(error);
+      if (!id || error) {
+        console.log(error || "Failed to save picks.");
       }
       /**
        * TODO
