@@ -7,8 +7,10 @@ export const setPicks = async (data) => {
   try {
     const response = await axios.post(url, data, config);
     return response.data;
-  } catch (error) {
-    return { error };
+  } catch (err) {
+    return {
+      error: err.response.data.message,
+    };
   }
 };
 

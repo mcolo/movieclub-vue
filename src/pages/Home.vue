@@ -19,10 +19,6 @@
         >
           <svg-share-icon class="share__icon"></svg-share-icon>
         </div>
-        <!-- <label for="title">Title</label>
-        <input v-model="title" name="title" placeholder="title" />
-        <button @click="sharePicks">Share Picks</button>
-        <a v-if="shareUrl" :href="shareUrl" target="_blank">{{ shareUrl }}</a> -->
       </template>
       <transition name="appear">
         <h2 class="placeholder" v-if="picks.length < 1">
@@ -31,7 +27,7 @@
       </transition>
     </section>
     <transition name="search-share-toggle">
-      <section class="search" v-show="!sharing">
+      <section class="search" v-if="!sharing">
         <div class="search-wrap" :class="{ searching: searching === true }">
           <input
             v-model="search"
@@ -64,7 +60,7 @@
       </section>
     </transition>
     <transition name="search-share-toggle">
-      <share-picks v-show="sharing" :picks="picks"></share-picks>
+      <share-picks v-if="sharing" :picks="picks"></share-picks>
     </transition>
   </div>
 </template>
@@ -93,13 +89,6 @@ export default {
       sharing: false,
       searching: false,
       quoteIndex: 0,
-      // quotes: [
-      //   "Toto, I've a feeling we're not in Kansas anymore.",
-      //   "Hasta la vista, baby.",
-      //   "Say hello to my little friend!",
-      //   "You're gonna need a bigger boat.",
-      //   "May the force be with you.",
-      // ],
       quotes: [
         {
           title: "The Wizard of Oz",
@@ -112,6 +101,12 @@ export default {
         { title: "Scarface", quote: "Say hello to my little friend!" },
         { title: "JAWS", quote: "You're gonna need a bigger boat." },
         { title: "Star Wars", quote: "May the force be with you." },
+        { title: "Bee Movie", quote: "Ya like jazz??" },
+        {
+          title: "The Birdcage",
+          quote: "I never wear shoes. They make me fall down.",
+        },
+        { title: "Batman", quote: "I'm Batman." },
       ],
     };
   },
@@ -152,6 +147,7 @@ export default {
       const data = await getMovieDataFromIds([movie.id]);
       this.picks.push(data.movieData[0]);
       const audio = new Audio(blop);
+      audio.volume = 0.7;
       audio.play();
     },
     pickExists(id) {
@@ -165,6 +161,7 @@ export default {
     },
     playWoosh() {
       const audio = new Audio(woosh);
+      audio.volume = 0.6;
       audio.play();
     },
     // TODO
@@ -213,6 +210,11 @@ export default {
   box-sizing: border-box;
   transition: 100ms cubic-bezier(0.4, 1, 0.8, 1.7), border 0ms;
   cursor: pointer;
+}
+
+.search__bar::placeholder {
+  color: #aaa;
+  font-style: italic;
 }
 
 .searching .search__bar,
@@ -277,6 +279,12 @@ export default {
   margin: 0 0 0 30px;
   cursor: pointer;
   transition: 150ms;
+  position: relative;
+}
+
+.poster:hover {
+  opacity: 0.4;
+  transform: scale(0.95);
 }
 
 .share {
@@ -312,7 +320,7 @@ export default {
 .share::before {
   opacity: 0;
   content: "Share";
-  transition: 150ms cubic-bezier(0.4, 1, 0.8, 1.7);
+  transition: 90ms cubic-bezier(0.4, 1, 0.8, 1.7);
   position: absolute;
   left: 27px;
   top: 0;

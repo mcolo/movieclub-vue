@@ -44,32 +44,34 @@ export default {
         setTimeout(() => (this.titleError = false), 400);
         return;
       }
-      const existingId = sessionStorage.getItem("pickId");
       const data = {
         title: this.title,
         picks: this.picks,
-        id: existingId,
       };
-      const { id } = await setPicks(data);
+      const { id, error } = await setPicks(data);
       if (!id) return;
+      if (error) {
+        console.log(error);
+      }
       /**
        * TODO
        * add error message in UI
        */
       this.shareUrl = window.location.origin + "/picks/" + id;
-      sessionStorage.setItem("pickId", id);
 
       // this is for fun
-      if (!existingId) {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-        });
-        const audio = new Audio(cheer);
-        audio.play();
-      }
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+      const audio = new Audio(cheer);
+      audio.volume = 0.5;
+      audio.play();
     },
+  },
+  destroyed() {
+    this.shareUrl = null;
   },
 };
 </script>
@@ -90,7 +92,6 @@ export default {
   background: #fff;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  border: 1px solid #eee;
   transition: 100ms cubic-bezier(0.4, 1, 0.8, 1.7);
   padding: 20px 40px 40px;
 }
@@ -116,7 +117,7 @@ label {
 }
 
 input {
-  border: 1px solid #ddd;
+  border: 1px solid #d2d6dc;
   outline: none;
   border-radius: 8px;
   line-height: 1;
@@ -130,7 +131,7 @@ input {
 
 input::placeholder {
   font-style: italic;
-  color: #aaa;
+  color: #d2d6dc;
 }
 
 input.error {
