@@ -1,6 +1,7 @@
 <template>
   <li @click="$emit('addToPicks', movie)" class="search__result">
-    <span class="year">{{ movie.year }} –</span> {{ movie.title }}
+    <span class="result-year">{{ movie.year }}</span>
+    <span class="result-title">{{ movie.title }}</span>
   </li>
 </template>
 
@@ -20,6 +21,8 @@ export default {
   list-style-type: none;
   cursor: pointer;
   padding: 10px 18px;
+  display: flex;
+  align-items: center;
 }
 
 .search__result:last-child {
@@ -35,15 +38,23 @@ export default {
   content: "👈";
   float: right;
   font-size: 22px;
+  margin-left: auto;
+  line-height: 16px;
 }
 
 .search__result:hover .year {
   color: var(--gray900);
 }
 
-.year {
-  margin: 0 5px 0 0;
+.result-year {
+  margin: 0 15px 0 0;
   color: var(--gray500);
   font-family: monospace;
+}
+
+@media screen and (max-width: 600px) {
+  .search__result:hover::after {
+    content: none;
+  }
 }
 </style>

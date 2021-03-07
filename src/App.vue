@@ -3,7 +3,7 @@
     <header>
       <template v-if="$route.name === 'picks'">
         <router-link class="router-link" to="/">
-          <h1 class="link-logo">
+          <h1 class="logo--link">
             movieclub
           </h1>
           🍿
@@ -78,8 +78,8 @@ h6 {
   font-weight: 700;
 }
 
-.link-logo,
-.logo {
+.logo,
+.logo--link {
   font-size: 16px;
   color: var(--gray900);
   text-transform: uppercase;
@@ -89,11 +89,11 @@ h6 {
   transition: 100ms;
 }
 
-.link-logo {
+.logo--link {
   margin: 0;
 }
 
-.link-logo:hover {
+.logo--link:hover {
   border-color: black;
 }
 
@@ -113,7 +113,23 @@ h6 {
   display: inline-block;
 }
 
-.posters::-webkit-scrollbar {
+/* .posters::-webkit-scrollbar {
   display: none;
+} */
+::-webkit-scrollbar {
+  width: 15px;
+  height: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--indigo500);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--indigo100);
+}
+
+::-webkit-scrollbar-corner {
+  background-color: var(--indigo100);
 }
 </style>

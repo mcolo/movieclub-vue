@@ -81,14 +81,20 @@ export default {
 
 <style scoped>
 .posters {
-  display: flex;
+  /* display: flex;
   flex-wrap: nowrap;
-  overflow-x: auto;
   justify-content: center;
-  padding: 30px 50px 70px;
-  text-align: center;
   align-items: center;
-  gap: 40px;
+  gap: 40px; */
+  overflow-x: auto;
+  padding: 30px 50px 35px;
+  margin-bottom: 40px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.posters > * + * {
+  margin-left: 35px;
 }
 
 .poster {
@@ -99,6 +105,7 @@ export default {
   box-shadow: 0px 0px 10px rgb(0 0 0 / 20%);
   cursor: pointer;
   transition: 150ms;
+  display: inline-block;
 }
 
 .poster:hover {
@@ -110,14 +117,14 @@ export default {
 }
 
 .poster:not(.selected):active {
-  transform: translateY(4px) scale(0.95);
+  transform: translateY(4px) scale(0.98);
   box-shadow: 0px 0px 7px rgb(0 0 0 / 45%);
 }
 
 .details {
-  width: 50%;
+  width: clamp(300px, 50%, 720px);
   margin: 0 auto;
-  min-width: 720px;
+  padding: 0 0 50px;
 }
 
 .details > * + * {
