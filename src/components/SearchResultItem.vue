@@ -28,7 +28,7 @@ export default {
 }
 
 .search__result:hover {
-  background-color: #e0e7ff;
+  background-color: var(--indigo100);
 }
 
 .search__result:hover::after {
@@ -37,9 +37,13 @@ export default {
   font-size: 22px;
 }
 
+.search__result:hover .year {
+  color: var(--gray900);
+}
+
 .year {
   margin: 0 5px 0 0;
-  color: #6b7280;
+  color: var(--gray500);
   font-family: monospace;
 }
 </style>

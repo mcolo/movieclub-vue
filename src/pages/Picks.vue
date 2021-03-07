@@ -120,6 +120,10 @@ export default {
   min-width: 720px;
 }
 
+.details > * + * {
+  margin-top: 20px;
+}
+
 .details__title {
   font-size: 42px;
   margin: 0;
@@ -130,7 +134,6 @@ export default {
 }
 
 .details__specs {
-  margin: 0;
   font-weight: 700;
 }
 
