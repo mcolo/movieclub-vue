@@ -3,7 +3,7 @@
     <header>
       <template v-if="$route.name === 'picks'">
         <router-link class="router-link" to="/">
-          <h1 class="link-logo">
+          <h1 class="logo--link">
             movieclub
           </h1>
           🍿
@@ -30,8 +30,8 @@ export default {
   },
   computed: {
     titleColor() {
-      let list = ["#e11d48", "#4338ca", "#06b6d4", "#10b981"];
-      return list[Math.floor(Math.random() * list.length)];
+      let colors = ["#e11d48", "#4338ca", "#06b6d4", "#10b981"];
+      return colors[Math.floor(Math.random() * colors.length)];
     },
   },
   methods: {
@@ -42,17 +42,28 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 @import url("https://fonts.googleapis.com/css2?family=Hind:wght@400;700&display=swap");
-@import "./styles/normalize.css";
-@use "sass:list";
+@import "./styles/reset.css";
+
+:root {
+  --gray50: #f9fafb;
+  --gray200: #e5e7eb;
+  --gray300: #d1d5db;
+  --gray400: #9ca3af;
+  --gray500: #6b7280;
+  --gray900: #111827;
+  --rose500: #f43f5e;
+  --indigo100: #e0e7ff;
+  --indigo500: #6366f1;
+  --indigo800: #3730a3;
+}
 
 body {
-  margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: #f9fafb;
+  background-color: var(--gray50);
   font-family: "Hind", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -67,10 +78,10 @@ h6 {
   font-weight: 700;
 }
 
-.link-logo,
-.logo {
+.logo,
+.logo--link {
   font-size: 16px;
-  color: #111827;
+  color: var(--gray900);
   text-transform: uppercase;
   display: inline-block;
   position: relative;
@@ -78,11 +89,11 @@ h6 {
   transition: 100ms;
 }
 
-.link-logo {
+.logo--link {
   margin: 0;
 }
 
-.link-logo:hover {
+.logo--link:hover {
   border-color: black;
 }
 
@@ -102,7 +113,23 @@ h6 {
   display: inline-block;
 }
 
-.posters::-webkit-scrollbar {
+/* .posters::-webkit-scrollbar {
   display: none;
+} */
+::-webkit-scrollbar {
+  width: 15px;
+  height: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--indigo500);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--indigo100);
+}
+
+::-webkit-scrollbar-corner {
+  background-color: var(--indigo100);
 }
 </style>

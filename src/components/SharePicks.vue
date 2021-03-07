@@ -88,7 +88,7 @@ export default {
 .share-card {
   min-width: 400px;
   position: relative;
-  background: #fff;
+  background: white;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   transition: 100ms cubic-bezier(0.4, 1, 0.8, 1.7);
@@ -102,21 +102,12 @@ export default {
 }
 
 h2 {
-  margin-bottom: 40px;
+  margin: 10px 0 30px;
   text-align: center;
 }
 
-label {
-  font-weight: 700;
-  color: #444;
-  text-transform: uppercase;
-  font-size: 14px;
-  margin-bottom: 5px;
-  display: block;
-}
-
 input {
-  border: 1px solid #d2d6dc;
+  border: 1px solid var(--gray300);
   outline: none;
   border-radius: 8px;
   line-height: 1;
@@ -130,13 +121,13 @@ input {
 
 input::placeholder {
   font-style: italic;
-  color: #d2d6dc;
+  color: var(--gray300);
 }
 
 input.error {
   animation: shake 75ms alternate infinite;
   animation-iteration-count: 3;
-  border-color: red;
+  border-color: var(--rose500);
 }
 
 button {
@@ -144,9 +135,9 @@ button {
   display: block;
   cursor: pointer;
   border: none;
-  background-color: #6366f1;
+  background-color: var(--indigo500);
   border-radius: 8px;
-  color: #fff;
+  color: var(--gray50);
   font-size: 16px;
   padding: 15px 0;
   font-weight: 700;
@@ -157,7 +148,7 @@ button {
 }
 
 button:hover {
-  background-color: #3730a3;
+  background-color: var(--indigo800);
 }
 
 @keyframes shake {

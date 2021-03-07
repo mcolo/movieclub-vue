@@ -164,9 +164,6 @@ export default {
       audio.volume = 0.6;
       audio.play();
     },
-    // TODO
-    // share URL in dialog? save ids in DB when button is clicked
-    // share URL after first pick? save ids in DB when pick is made
   },
 };
 </script>
@@ -177,20 +174,18 @@ export default {
 }
 
 .search {
-  width: 50%;
+  width: clamp(350px, 50%, 720px);
   margin: 0 auto;
-  min-width: 720px;
-  display: flex;
+  /* display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; */
 }
 
 .search-wrap {
   position: relative;
-  background: #fff;
+  background: white;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  border: 1px solid #eee;
   transition: 100ms cubic-bezier(0.4, 1, 0.8, 1.7);
 }
 
@@ -206,22 +201,22 @@ export default {
   padding: 15px 20px 10px 58px;
   font-size: 18px;
   display: block;
-  min-width: 480px;
   box-sizing: border-box;
   transition: 100ms cubic-bezier(0.4, 1, 0.8, 1.7), border 0ms;
   cursor: pointer;
+  width: 100%;
 }
 
 .search__bar::placeholder {
-  color: #aaa;
+  color: var(--gray400);
   font-style: italic;
 }
 
 .searching .search__bar,
 .search__bar:focus {
-  min-width: 540px;
+  width: clamp(100%, 50%, 500px);
   padding: 20px 25px 15px 58px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--gray200);
   cursor: text;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
@@ -241,22 +236,18 @@ export default {
   transform: translateY(5px) scale(1.2);
 }
 
-/* .search__icon >>> path {
-  fill: #a5b4fc;
-} */
-
 .search__tip {
   margin: 0;
   padding: 15px 18px 10px;
   font-size: 12px;
   text-transform: uppercase;
   font-weight: 700;
-  color: #aaa;
+  color: var(--gray400);
   letter-spacing: 1px;
 }
 
 .search__results {
-  min-width: 540px;
+  /* min-width: 540px; */
   margin: 0;
   padding: 0;
 }
@@ -280,6 +271,7 @@ export default {
   cursor: pointer;
   transition: 150ms;
   position: relative;
+  display: inline-block;
 }
 
 .poster:hover {
@@ -298,11 +290,11 @@ export default {
   width: 40px;
   transition: 130ms ease;
   position: relative;
-  fill: #6366f1;
+  fill: var(--indigo500);
 }
 
 .share--active .share__icon {
-  fill: #f43f5e;
+  fill: var(--rose500);
 }
 
 .share--active .share__icon {
@@ -324,7 +316,7 @@ export default {
   position: absolute;
   left: 27px;
   top: 0;
-  color: #6366f1;
+  color: var(--indigo500);
   font-weight: 700;
   line-height: 44px;
   visibility: hidden;
@@ -333,7 +325,7 @@ export default {
 
 .share.share--active::before {
   content: "Back";
-  color: #f43f5e;
+  color: var(--rose500);
   visibility: visible;
 }
 
